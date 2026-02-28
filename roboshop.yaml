@@ -39,3 +39,21 @@
       ttl: 1
       wait: true
     loop: "{{ ec2_output.results }}"
+    when: item.item != "frontend"
+
+
+  - name: print the ec2 output
+    ansible.builtin.debug:
+     msg: "{{ ec2_output }}"
+
+  - name: create route 53 record
+    amazon.aws.route53:
+      state: present
+      zone: "{{ domain_name }}"
+      record: "roboshop-{{ env }}.{{ domain_name }}"
+      type: A
+      value: "{{ item.instances[0].public_ip_address }}"
+      ttl: 1
+      wait: true
+    loop: "{{ ec2_output.results }}"
+    when: item.item == "frontend"
