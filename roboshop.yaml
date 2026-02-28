@@ -6,6 +6,7 @@
     sg_id: sg-0869d702361b71486
     im_id: ami-0220d79f3f480ecf5
     env: dev
+    action: create
     domain_name: vinoddevops.online
     instances:
     - mongodb
@@ -24,10 +25,12 @@
         Name: "{{ item }}-{{ env }}"
     loop: "{{ instances }}"
     register: ec2_output
+    when: action == "create"
 
   - name: print the ec2 output
     ansible.builtin.debug:
      msg: "{{ ec2_output }}"
+    when: action == "create"
 
   - name: create route 53 record
     amazon.aws.route53:
@@ -40,10 +43,12 @@
       wait: true
       overwrite: true
     loop: "{{ ec2_output.results }}"
+    when: action == "create"
 
   - name: print the ec2 output
     ansible.builtin.debug:
      msg: "{{ ec2_output }}"
+    when: action == "create"
 
   - name: create route 53 record
     amazon.aws.route53:
@@ -56,4 +61,22 @@
       wait: true
       overwrite: true
     loop: "{{ ec2_output.results }}"
-    when: item.item == "frontend"
+    when: 
+    - item.item == "frontend"
+    - action == "create"
+
+  - name: delete route 53 records
+    amazon.aws.route53:
+      state: absent
+      zone: "{{ domain_name }}"
+      record: "{{ item }}-{{ env }}.{{ domain_name }}"
+      type: A
+    loop: "{{ instances }}"
+    when: action == "destroy" 
+  
+  - name: delete ec2 instance
+    amazon.aws.ec2_instance:
+      state: absent
+      name: "{{ item }}-{{ env }}"
+    loop: instances
+    when: action == "destroy"
