@@ -6,6 +6,7 @@
     sg_id: sg-0869d702361b71486
     im_id: ami-0220d79f3f480ecf5
     env: dev
+    domain_name: vinoddevops.online
     instances:
     - mongodb
     - catalogue
@@ -23,6 +24,18 @@
         Name: "{{ item }}-{{ env }}"
     loop: "{{ instances }}"
     register: ec2_output
+
   - name: print the ec2 output
     ansible.builtin.debug:
      msg: "{{ ec2_output }}"
+
+  - name: create route 53 record
+    amazon.aws.route53:
+      state: present
+      zone: "{{ domain_name }}"
+      record: "{{ item.item }}-{{ env }}.{{ domain_name }}"
+      type: A
+      value: "{{ item.instances[0].private_ip_address }}"
+      ttl: 1
+      wait: true
+    loop: "{{ ec2_output.results }}"
