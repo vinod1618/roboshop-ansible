@@ -38,6 +38,7 @@
       value: "{{ item.instances[0].private_ip_address }}"
       ttl: 1
       wait: true
+      overwrite: true
     loop: "{{ ec2_output.results }}"
 
   - name: print the ec2 output
@@ -53,5 +54,6 @@
       value: "{{ item.instances[0].public_ip_address }}"
       ttl: 1
       wait: true
+      overwrite: true
     loop: "{{ ec2_output.results }}"
     when: item.item == "frontend"
