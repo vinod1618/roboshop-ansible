@@ -39,8 +39,6 @@
       ttl: 1
       wait: true
     loop: "{{ ec2_output.results }}"
-    when: item.item != "frontend"
-
 
   - name: print the ec2 output
     ansible.builtin.debug:
