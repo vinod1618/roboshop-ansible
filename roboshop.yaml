@@ -81,5 +81,5 @@
       state: absent
       name: "{{ item }}-{{ env }}"
       wait: false
-    loop: instances
+    loop: "{{ instances }}"
     when: action == "destroy"
