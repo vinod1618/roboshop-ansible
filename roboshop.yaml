@@ -47,11 +47,6 @@
     loop: "{{ ec2_output.results }}"
     when: action == "create"
 
-  - name: print the ec2 output
-    ansible.builtin.debug:
-     msg: "{{ ec2_output }}"
-    when: action == "create"
-
   - name: create route 53 record
     amazon.aws.route53:
       state: present
