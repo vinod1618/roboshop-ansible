@@ -15,7 +15,7 @@
         name: roboshop
         system: true
         home: /app
-        shell: /sbin/app
+        shell: /sbin/nologin
         comment: "roboshop system user"
 
     - name: ansible delete app directory
