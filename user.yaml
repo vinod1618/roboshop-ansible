@@ -1,4 +1,4 @@
-- name: configure catalogue host
+- name: configure user host
   hosts: user
   become: yes
   tasks:
@@ -28,12 +28,12 @@
         path: /app
         state: directory
 
-    - name: delete catalogue zip file
+    - name: delete user zip file
       ansible.builtin.file:
-        path: /tmp/catalogue.zip
+        path: /tmp/user.zip
         state: absent
       
-    - name: download catalogue
+    - name: download user
       ansible.builtin.get_url:
         url: https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip
         dest: /tmp/user.zip
@@ -48,35 +48,13 @@
       community.general.npm:
         path: /app
 
-    - name: copy catalogue service
+    - name: copy user service
       ansible.builtin.copy:
-        src: catalogue.service
-        dest: /etc/systemd/system/catalogue.service
+        src: user.service
+        dest: /etc/systemd/system/user.service
 
-    - name: copy mongo repo
-      ansible.builtin.copy:
-        src: mongo.repo
-        dest: /etc/yum.repos.d/mongo.repo
-
-    - name: install mongodb client software
-      ansible.builtin.dnf:
-        name: mongodb-mongosh
-        state: present
-
-    - name: check products are loaded or not
-      ansible.builtin.command: mongosh --host "{{ MONGODB_HOST }}" --quiet  --eval 'db.getMongo().getDBNames().indexOf("catalogue")'
-      register: catalogue_output
-
-    - name: print catalogue output
-      ansible.builtin.debug:
-        msg: "{{ catalogue_output }}"
-
-    - name: load the products
-      ansible.builtin.shell: mongosh --host "{{ MONGODB_HOST }}" </app/db/master-data.js
-      when: catalogue_output.stdout | int < 0
-
-    - name: start catalogue service
+    - name: start user service
       ansible.builtin.service:
-        name: catalogue
+        name: user
         state: restarted
         enabled: yes
