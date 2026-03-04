@@ -54,7 +54,9 @@
       wait: false
       overwrite: true
     loop: "{{ ec2_output.results }}"
-    when: action == "create"
+    when: 
+    - action == "create"
+    - item.item != 'frontend'
 
   - name: create route 53 record
     amazon.aws.route53:
