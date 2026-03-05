@@ -3,8 +3,9 @@
   become: yes
   tasks:
   - name: install mysql server
-    name: mysql-server
-    state: present
+    ansible.builtin.ddnf:
+     name: mysql-server
+     state: present
 
   - name: start and enable mysql server
     ansible.builtin.service:
