@@ -1,15 +1,16 @@
-- name: configure shipping module
-  hosts: shipping
+- name: configure payment server
+  hosts: payment
   become: yes
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
   tasks:
-  - name: install maven
+  - name: install pythin
     ansible.builtin.dnf:
-     name: maven
-     state: present
+      name: "{{ item }}"
+      state: present
+    loop:
+    - python3 
+    - gcc 
+    - python3-devel
 
-   
   - name: create system user roboshop
     ansible.builtin.user:
       name: roboshop
@@ -45,38 +46,23 @@
       remote_src: yes
 
   - name: install dependencies
-    ansible.builtin.command:  mvn clean package
-    args:
-      chdir: /app
-
-  - name: install dependencies
-    ansible.builtin.command:  mv target/shipping-1.0.jar shipping.jar 
+    ansible.builtin.pip:
+      requirements: requirements.txt
+      execul=table: pip3.9
     args:
       chdir: /app
 
   - name: copy the service file
     ansible.builtin.template:
-      src: shipping.service
-      dest: /etc/systemd/system/shipping.service
+      src: payment.service
+      dest: /etc/systemd/system/payment.service
 
   - name: Reload systemd daemon
     ansible.builtin.systemd_service:
       daemon_reload: true
 
-  - name: import shipping data
-    community.mysql.mysql_db:
-      state: import
-      name: all
-      login_host: "{{ mysql_host }}"
-      login_password: roboshop@1
-      target: "{{ item }}"
-    loop: 
-    - /app/db/schema.sql
-    - /app/db/app-user.sql
-    - /app/db/master-data.sql
-
-  - name: start and enale shipping module
+  - name: enable and start payment
     ansible.builtin.service:
-     name: shipping
-     state: restarted
-     enabled: yes
+      name: payment
+      state: restarted
+      enabled: yes 
