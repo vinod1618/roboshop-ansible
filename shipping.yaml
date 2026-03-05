@@ -54,8 +54,8 @@
 
   - name: copy the service file
     ansible.builtin.template:
-    src: shipping.service
-    dest: /etc/systemd/system/shipping.service
+      src: shipping.service
+      dest: /etc/systemd/system/shipping.service
 
   - name: Reload systemd daemon
     ansible.builtin.systemd_service:
