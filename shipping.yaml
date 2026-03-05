@@ -65,7 +65,7 @@
     community.mysql.mysql_db:
       state: import
       name: all
-      login_host: "{{ mysq_host }}"
+      login_host: "{{ mysql_host }}"
       login_password: roboshop@1
       target: "{{ item }}"
     loop: 
