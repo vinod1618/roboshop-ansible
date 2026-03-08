@@ -6,7 +6,7 @@
     ansible.builtin.command: dnf module enable nginx:1.24 -y
 
   - name: install nhinx
-    ansible.builtin.debug:
+    ansible.builtin.dnf:
       name: nginx
       state: present
 
