@@ -63,8 +63,11 @@
 
   - name: install dependencies
     ansible.builtin.pip:
-      name: PyMySQL
+      name: {{ item }}
       state: present
+    loop:
+    - PyMySQL
+    - cryptography
 
   - name: import shipping data
     community.mysql.mysql_db:
