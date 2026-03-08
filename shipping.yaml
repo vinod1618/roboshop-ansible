@@ -64,7 +64,7 @@
   - name: install dependencies
     ansible.builtin.pip:
       name: "{{ item }}"
-      state: present
+      executable: pip3.9
     loop:
     - PyMySQL
     - cryptography
