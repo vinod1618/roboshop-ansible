@@ -63,7 +63,7 @@
 
   - name: install dependencies
     ansible.builtin.pip:
-      name: {{ item }}
+      name: "{{ item }}"
       state: present
     loop:
     - PyMySQL
